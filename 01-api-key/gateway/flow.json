@@ -1,0 +1,123 @@
+[
+  {
+    "id": "api_key_tab",
+    "type": "tab",
+    "label": "01 – API Key Auth",
+    "disabled": false,
+    "info": "IoT Gateway demo: API Key authentication against Express.js backend on port 3001."
+  },
+  {
+    "id": "inject_valid",
+    "type": "inject",
+    "z": "api_key_tab",
+    "name": "Send VALID telemetry",
+    "props": [],
+    "repeat": "",
+    "once": false,
+    "x": 150,
+    "y": 100,
+    "wires": [["fn_valid"]]
+  },
+  {
+    "id": "fn_valid",
+    "type": "function",
+    "z": "api_key_tab",
+    "name": "Prepare valid request",
+    "func": "msg.headers = {\n    'Content-Type': 'application/json',\n    'X-API-Key': 'key-abc-123'\n};\nmsg.payload = {\n    temperature: +(20 + Math.random() * 10).toFixed(1),\n    humidity: +(40 + Math.random() * 40).toFixed(0)\n};\nreturn msg;",
+    "outputs": 1,
+    "x": 370,
+    "y": 100,
+    "wires": [["http_post"]]
+  },
+  {
+    "id": "inject_invalid",
+    "type": "inject",
+    "z": "api_key_tab",
+    "name": "Send INVALID telemetry",
+    "props": [],
+    "repeat": "",
+    "once": false,
+    "x": 150,
+    "y": 200,
+    "wires": [["fn_invalid"]]
+  },
+  {
+    "id": "fn_invalid",
+    "type": "function",
+    "z": "api_key_tab",
+    "name": "Prepare invalid request",
+    "func": "msg.headers = {\n    'Content-Type': 'application/json',\n    'X-API-Key': 'key-WRONG-000'\n};\nmsg.payload = {\n    temperature: 99.9,\n    humidity: 99\n};\nreturn msg;",
+    "outputs": 1,
+    "x": 370,
+    "y": 200,
+    "wires": [["http_post"]]
+  },
+  {
+    "id": "http_post",
+    "type": "http request",
+    "z": "api_key_tab",
+    "name": "POST /api/telemetry",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://localhost:3001/api/telemetry",
+    "x": 600,
+    "y": 150,
+    "wires": [["debug_post"]]
+  },
+  {
+    "id": "debug_post",
+    "type": "debug",
+    "z": "api_key_tab",
+    "name": "POST response",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "statusType": "auto",
+    "x": 810,
+    "y": 150,
+    "wires": []
+  },
+  {
+    "id": "inject_list",
+    "type": "inject",
+    "z": "api_key_tab",
+    "name": "List telemetry",
+    "props": [],
+    "repeat": "",
+    "once": false,
+    "x": 150,
+    "y": 320,
+    "wires": [["http_get"]]
+  },
+  {
+    "id": "http_get",
+    "type": "http request",
+    "z": "api_key_tab",
+    "name": "GET /api/telemetry",
+    "method": "GET",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://localhost:3001/api/telemetry",
+    "x": 400,
+    "y": 320,
+    "wires": [["debug_get"]]
+  },
+  {
+    "id": "debug_get",
+    "type": "debug",
+    "z": "api_key_tab",
+    "name": "GET response",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "statusType": "auto",
+    "x": 620,
+    "y": 320,
+    "wires": []
+  }
+]

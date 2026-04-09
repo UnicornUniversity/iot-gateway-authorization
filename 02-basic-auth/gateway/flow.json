@@ -1,0 +1,123 @@
+[
+  {
+    "id": "basic_auth_tab",
+    "type": "tab",
+    "label": "02 – Basic Auth",
+    "disabled": false,
+    "info": "IoT Gateway demo: HTTP Basic Authentication against Express.js backend on port 3002."
+  },
+  {
+    "id": "ba_inject_valid",
+    "type": "inject",
+    "z": "basic_auth_tab",
+    "name": "Send VALID telemetry",
+    "props": [],
+    "repeat": "",
+    "once": false,
+    "x": 150,
+    "y": 100,
+    "wires": [["ba_fn_valid"]]
+  },
+  {
+    "id": "ba_fn_valid",
+    "type": "function",
+    "z": "basic_auth_tab",
+    "name": "Prepare valid request",
+    "func": "msg.headers = {\n    'Content-Type': 'application/json',\n    'Authorization': 'Basic ' + Buffer.from('gateway-01:s3cret-gw01').toString('base64')\n};\nmsg.payload = {\n    temperature: +(20 + Math.random() * 10).toFixed(1),\n    humidity: +(40 + Math.random() * 40).toFixed(0)\n};\nreturn msg;",
+    "outputs": 1,
+    "x": 370,
+    "y": 100,
+    "wires": [["ba_http_post"]]
+  },
+  {
+    "id": "ba_inject_invalid",
+    "type": "inject",
+    "z": "basic_auth_tab",
+    "name": "Send INVALID telemetry",
+    "props": [],
+    "repeat": "",
+    "once": false,
+    "x": 150,
+    "y": 200,
+    "wires": [["ba_fn_invalid"]]
+  },
+  {
+    "id": "ba_fn_invalid",
+    "type": "function",
+    "z": "basic_auth_tab",
+    "name": "Prepare invalid request",
+    "func": "msg.headers = {\n    'Content-Type': 'application/json',\n    'Authorization': 'Basic ' + Buffer.from('gateway-01:wrong-password').toString('base64')\n};\nmsg.payload = {\n    temperature: 99.9,\n    humidity: 99\n};\nreturn msg;",
+    "outputs": 1,
+    "x": 370,
+    "y": 200,
+    "wires": [["ba_http_post"]]
+  },
+  {
+    "id": "ba_http_post",
+    "type": "http request",
+    "z": "basic_auth_tab",
+    "name": "POST /api/telemetry",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://localhost:3002/api/telemetry",
+    "x": 600,
+    "y": 150,
+    "wires": [["ba_debug_post"]]
+  },
+  {
+    "id": "ba_debug_post",
+    "type": "debug",
+    "z": "basic_auth_tab",
+    "name": "POST response",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "statusType": "auto",
+    "x": 810,
+    "y": 150,
+    "wires": []
+  },
+  {
+    "id": "ba_inject_list",
+    "type": "inject",
+    "z": "basic_auth_tab",
+    "name": "List telemetry",
+    "props": [],
+    "repeat": "",
+    "once": false,
+    "x": 150,
+    "y": 320,
+    "wires": [["ba_http_get"]]
+  },
+  {
+    "id": "ba_http_get",
+    "type": "http request",
+    "z": "basic_auth_tab",
+    "name": "GET /api/telemetry",
+    "method": "GET",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://localhost:3002/api/telemetry",
+    "x": 400,
+    "y": 320,
+    "wires": [["ba_debug_get"]]
+  },
+  {
+    "id": "ba_debug_get",
+    "type": "debug",
+    "z": "basic_auth_tab",
+    "name": "GET response",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "statusType": "auto",
+    "x": 620,
+    "y": 320,
+    "wires": []
+  }
+]

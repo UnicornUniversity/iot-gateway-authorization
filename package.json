@@ -1,0 +1,25 @@
+{
+  "name": "iot-gateway-authorization",
+  "version": "1.0.0",
+  "description": "IoT Gateway Authorization Demos – 5 approaches (API Key, Basic Auth, JWT, HMAC, mTLS)",
+  "private": true,
+  "scripts": {
+    "demo:01": "node 01-api-key/server/app.js",
+    "demo:02": "node 02-basic-auth/server/app.js",
+    "demo:03": "node 03-jwt/server/app.js",
+    "demo:04": "node 04-hmac-signature/server/app.js",
+    "demo:05": "node 05-mtls/server/app.js",
+    "gw:01": "node 01-api-key/gateway/gateway.js",
+    "gw:02": "node 02-basic-auth/gateway/gateway.js",
+    "gw:03": "node 03-jwt/gateway/gateway.js",
+    "gw:04": "node 04-hmac-signature/gateway/gateway.js",
+    "gw:05": "node 05-mtls/gateway/gateway.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

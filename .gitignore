@@ -1,0 +1,7 @@
+node_modules/
+**/data/telemetry.json
+05-mtls/certs/
+__pycache__/
+*.pyc
+.DS_Store
+.history/

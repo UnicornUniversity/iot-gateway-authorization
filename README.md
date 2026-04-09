@@ -112,10 +112,12 @@ node 01-api-key/gateway/gateway.js
 python 01-api-key/gateway/gateway.py
 ```
 
+Node-RED: import `01-api-key/gateway/flow.json` → click inject nodes.
+
 **How it works:**
-- Each device has a unique API key assigned
-- The gateway sends it in every request as `X-API-Key: key-abc-123`
-- The server looks up the key in the device registry
+1. Each device has a unique API key assigned
+2. The gateway sends it in every request as `X-API-Key: key-abc-123`
+3. The server looks up the key in the device registry
 
 **Identity discovery:** The server looks up the API key in the device registry – the key is unique per device, so the key value itself uniquely identifies the gateway. Identity is derived from the key value (whoever has key `key-abc-123` is `gateway-01`).
 
@@ -131,14 +133,20 @@ python 01-api-key/gateway/gateway.py
 Standard HTTP authentication. The gateway sends `deviceId:secret` encoded in Base64 in the `Authorization` header.
 
 ```bash
+# Terminal 1: start server
 node 02-basic-auth/server/app.js
+
+# Terminal 2: start gateway (Node.js / Python)
 node 02-basic-auth/gateway/gateway.js
+python 02-basic-auth/gateway/gateway.py
 ```
 
+Node-RED: import `02-basic-auth/gateway/flow.json` → click inject nodes.
+
 **How it works:**
-- The gateway encodes `gateway-01:s3cret-gw01` to Base64
-- Sends the header `Authorization: Basic Z2F0ZXdheS0wMTpzM2NyZXQtZ3cwMQ==`
-- The server decodes, splits into deviceId and secret, verifies
+1. The gateway encodes `gateway-01:s3cret-gw01` to Base64
+2. Sends the header `Authorization: Basic Z2F0ZXdheS0wMTpzM2NyZXQtZ3cwMQ==`
+3. The server decodes, splits into deviceId and secret, verifies
 
 **Identity discovery:** The server decodes Base64 and splits the result into `deviceId:secret`. The identity (deviceId) is an explicit part of the credentials – the gateway sends it directly along with the secret.
 
@@ -154,9 +162,15 @@ node 02-basic-auth/gateway/gateway.js
 The gateway first authenticates and receives a short-lived token. It then uses this token for subsequent communication.
 
 ```bash
+# Terminal 1: start server
 node 03-jwt/server/app.js
+
+# Terminal 2: start gateway (Node.js / Python)
 node 03-jwt/gateway/gateway.js
+python 03-jwt/gateway/gateway.py
 ```
+
+Node-RED: import `03-jwt/gateway/flow.json` → click inject nodes sequentially (1. Login → 2. Send → 3. List → 4. Invalid).
 
 **How it works:**
 1. The gateway sends `POST /api/auth/login` with `{ deviceId, secret }`
@@ -178,9 +192,15 @@ node 03-jwt/gateway/gateway.js
 The gateway signs every request using HMAC-SHA256. The shared secret is never transmitted over the network.
 
 ```bash
+# Terminal 1: start server
 node 04-hmac-signature/server/app.js
+
+# Terminal 2: start gateway (Node.js / Python)
 node 04-hmac-signature/gateway/gateway.js
+python 04-hmac-signature/gateway/gateway.py
 ```
+
+Node-RED: import `04-hmac-signature/gateway/flow.json` → click inject nodes. Requires Node-RED 2.0+ (`libs` property on function nodes).
 
 **How it works:**
 1. The gateway constructs a string: `METHOD\nPATH\nTIMESTAMP\nBODY`
@@ -204,13 +224,18 @@ node 04-hmac-signature/gateway/gateway.js
 Mutual certificate authentication. Both the server and gateway have certificates signed by a common Certificate Authority (CA).
 
 ```bash
-# First generate certificates
+# 1. Generate certificates (once)
 bash 05-mtls/generate-certs.sh
 
-# Then start
+# Terminal 1: start server
 node 05-mtls/server/app.js
+
+# Terminal 2: start gateway (Node.js / Python)
 node 05-mtls/gateway/gateway.js
+python 05-mtls/gateway/gateway.py
 ```
+
+Node-RED: requires TLS config node with certificate paths – for teaching purposes, use the Node.js or Python variant.
 
 **How it works:**
 1. During TLS handshake, the server requests the gateway's certificate

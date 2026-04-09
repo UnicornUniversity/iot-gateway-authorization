@@ -2,6 +2,14 @@
 
 Teaching material for the **Internet of Things** course – 5 approaches to authorizing an IoT gateway (hub) against an Express.js backend.
 
+## Download
+
+```bash
+git clone https://github.com/UnicornUniversity/iot-gateway-authorization.git
+cd iot-gateway-authorization
+npm install
+```
+
 ## Motivation
 
 An IoT gateway is the intermediary between sensors/actuators and the cloud backend. Each gateway must **prove its identity** to the backend (authentication) and the backend must **verify its permissions** (authorization). Without this, anyone can send fake data or read other devices' measurements.
